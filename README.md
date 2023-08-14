@@ -14,7 +14,7 @@ Aplicacion web con React  de lista de tareas , con CRUD usando un simulador back
 
 ## Setup
 
-1. Descargar  [sparrest js]("https://github.com/kasappeal/sparrest.js")
+1. Descargar  [sparrest-js](https://github.com/kasappeal/sparrest.js)
 2. agregar los array "users":[] y "tasks":[] en el archivo db.json que esta en la carpeta de sparrest-js
 3. Ejecutar sparrest con npm start
 4. Correr este proyecto con npm run dev
