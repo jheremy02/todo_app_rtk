@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showEditModal } from "../features/tasks/ui";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { editTask } from "../features/tasks/taskSlice";
+import { editTask, getTasksThunk, updateTaskThunk } from "../features/tasks/taskSlice";
 import { updateTaskService } from "./Tasks/service";
 import { getTasks } from "./Tasks/handlersTasks";
 import { toast } from "react-toastify";
@@ -36,7 +36,7 @@ function ModalEditTask() {
   }
 
   async function onSubmit(data) {
-    const loading=toast.loading("Loading")
+    //const loading=toast.loading("Loading")
     try {
       const taskUpdated = {
         ...task_to_edit,
@@ -44,15 +44,14 @@ function ModalEditTask() {
         description: data.edit_description,
       };
   
-      await updateTaskService(taskUpdated);
-      await getTasks(dispatch);
+      const response = await dispatch(updateTaskThunk(taskUpdated))
+      await dispatch(getTasksThunk({}))
       closeModal();
-      toast.dismiss(loading)
-      toast.success("task updated successfully")
+      //toast.dismiss(loading)
+      //toast.success("task updated successfully")
 
     } catch (error) {
 
-      toast.dismiss(loading)
       toast.error(error.message)
       
     }

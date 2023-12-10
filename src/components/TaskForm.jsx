@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
-import { addTask, resetTasks } from "../features/tasks/taskSlice";
+import { addTask, createTaskThunk, getTasksThunk, resetTasks } from "../features/tasks/taskSlice";
 import { createTaskService, getTasksService } from "./Tasks/service";
 import { getTasks } from "./Tasks/handlersTasks";
 import { toast } from "react-toastify";
@@ -17,24 +17,22 @@ function TaskForm() {
   const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
-    const loading=toast.loading("Loading")
+    //const loading=toast.loading("Loading")
     try {
       const newTask = {
         title: data.task_title,
         description: data.task_description,
         status:false
       };
-
-      const responseCreate = await createTaskService(newTask);
-
-      
-      await getTasks(dispatch);
-      toast.dismiss(loading)
-      toast.success("task created successfully")
-
+      //const responseCreate = await createTaskService(newTask);
+      const responseCreate= await dispatch(createTaskThunk(newTask))
+      const responseTasks=await dispatch(getTasksThunk({}))
+      //await getTasks(dispatch);
+      //toast.dismiss(loading)
+      //toast.success("task created successfully")
       reset();
     } catch (error) {
-      console.log(error);
+      toast.error(error.message)
     }
   };
 

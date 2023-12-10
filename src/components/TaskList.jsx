@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addTask, deleteTask, resetTasks } from "../features/tasks/taskSlice";
+import { addTask, deleteTask, deleteTaskThunk, getTasksThunk, resetTasks, updateTaskThunk } from "../features/tasks/taskSlice";
 import { load_data_to_edit, showEditModal } from "../features/tasks/ui";
 import { useEffect } from "react";
 import { deleteTaskService, updateTaskService } from "./Tasks/service";
@@ -7,20 +7,21 @@ import { getTasks } from "./Tasks/handlersTasks";
 import { toast } from "react-toastify";
 
 function TaskList() {
-  const tasks = useSelector((state) => state.tasks);
+  const tasks = useSelector((state) => state.tasks.taskList);
 
   const dispatch = useDispatch();
 
   async function onClickDelete(task) {
-    const loading=toast.loading("Loading")
+    
     try {
-      const response = await deleteTaskService(task);
-      //dispatch(deleteTask(task));
-      await getTasks(dispatch)
-      toast.dismiss(loading)
-      toast.success("task deleted successfully")
+      const response = await dispatch(deleteTaskThunk(task))
+
+      if (!response.error) {
+        dispatch(getTasksThunk({}))
+      }
+      
     } catch (error) {
-      toast.dismiss(loading)
+      
       toast.error(error.message)
     }
   }
@@ -33,25 +34,26 @@ function TaskList() {
   }
 
   async function handleClickToggle(task,event) {
-    const loading=toast.loading("Loading")
-      
+   
       try {
         const taskUpdated={
           ...task,
           status:event.target.checked
         }
-        const response=await updateTaskService(taskUpdated)
-        await getTasks(dispatch)
-        toast.dismiss(loading)
-        toast.success("task updated successfully")
+        const response = await dispatch(updateTaskThunk(taskUpdated))
+          await dispatch(getTasksThunk({}))
       } catch (error) {
-        toast.dismiss(loading)
+        
         toast.error(error.message)
       }
   }
 
   useEffect(() => {
-    getTasks(dispatch)
+    //getTasks(dispatch)
+    (async () =>{
+      const response =await  dispatch(getTasksThunk({}))
+    
+    })()
   }, []);
 
   return (
